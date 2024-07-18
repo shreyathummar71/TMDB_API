@@ -1,9 +1,7 @@
 //On pageload calls the fetch
-
 document.addEventListener("DOMContentLoaded", async () => {
   const apikey = "fddc45029159988c8c3aca4c9d7c477e";
   const apiUrl = `https://api.themoviedb.org/3/movie/popular?api_key=${apikey}&language=en-US&page=1`;
-
   //Fetching Movies data
   try {
     const response = await fetch(apiUrl);
@@ -17,7 +15,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("Fetch Error", error);
   }
 });
-
 const fetchData = (movies) => {
   const moviesContainer = document.getElementById("movies-container");
   moviesContainer.innerHTML = "";
@@ -40,14 +37,16 @@ const fetchData = (movies) => {
     "items-center"
   );
   movies.forEach((movie) => {
+    console.log(movie);
     const title = movie.title;
     const thumbNail = movie.poster_path;
     const overview = movie.overview;
+    const uniqueId = movie.id;
+    const releaseDate = movie.release_date;
     const card = document.createElement("div");
     card.classList.add(
       "max-w-md",
       "rounded-lg",
-      "overflow-hidden",
       "shadow-lg",
       "m-2",
       "h-auto",
@@ -55,91 +54,46 @@ const fetchData = (movies) => {
     );
     card.innerHTML = `
     <img src= "${`https://image.tmdb.org/t/p/w500${thumbNail}`}" alt="${title}" class="w-full h-auto object-cover">
-    <div class="px-6 py-4 h-80 w-full">
-     <div class="font-bold text-xl mb-2">${title}</div>
-    <p class="text-gray-700 text-base">${overview}</p>
-    
+    <div class="px-6 py-4 h-auto w-full">
+     <div class="font-bold text-xl mb-2 truncate">${title}</div>
+    <p class="text-gray-700 text-base truncate">${overview}</p>
+    <div class="font-bold text-l mb-2">Releasing on: ${releaseDate}</div>
+    <button class="add-to-cart bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"  data-poster-path="https://image.tmdb.org/t/p/w500/${thumbNail}" data-id="${uniqueId}" data-title="${title}">Add to Favorite</button>
     </div>
    `;
-
-  moviesContainer.appendChild(card);
+    moviesContainer.appendChild(card);
+  });
+  // Add event listeners to the buttons
+  const buttons = document.querySelectorAll(".add-to-cart");
+  buttons.forEach((button) => {
+    button.addEventListener("click", addToCart);
   });
 };
+function addToCart(event) {
+  const button = event.target;
+  const movieId = button.getAttribute("data-id");
+  const movieTitle = button.getAttribute("data-title");
+  const posterPath =
+    button.getAttribute("data-poster-path") || "placeholder-image-url";
 
+  // Retrieve cart from localStorage or initialize an empty array
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-
-// const API_KEY="api_key=7d7770ef343d65dd472d4fcc1705245c";
-// const movieURL="https://api.themoviedb.org/3/discover/movie?";
-// const BASE_URL=movieURL+API_KEY;
-
-
-/*async function getMovies(url)
-    {
-        fetch(BASE_URL)
-        .then((response) => {
-            if(!response.ok) throw new Error('Something Went Wrong');
-            return response.json();
-        })
-        .then(data => {
-            console.log(data);
-            const movies = data.results;
-            console.log("movies :",movies);
-            for (let i = 0; i < movies.length; i++) 
-            {
-                console.log("Title: " + movies[i].title);
-            }
-            })
-            
-    .catch(error => console.error('Error:', error));
-    }
-console.log("get movies :" ,getMovies(BASE_URL)) ;
-
-
-
-
-
-
-/*function searchMovies() {
-  
-  //const searchInput = document.getElementById('searchInput');
-//const moviesGrid = document.getElementById('MoviesGrid');
-  const query = searchInput.value;
-  fetch(BASE_URL)
-  .then((response) => {
-      if(!response.ok) throw new Error('Something Went Wrong');
-      return response.json();
-  })
-  .then(data => {
-      console.log(data);
-      const movies = data.results;
-      console.log("movies :",movies);
-      movies.forEach(movie => {
-        const movieDiv = document.createElement('div');
-        movieDiv.innerHTML = `
-          <h2>${movie.Title}</h2>
-          <img src="${movie.poster_path}" alt="${movie.Title}">
-          <p>${movie.release_date}</p>
-        `;
-        moviesGrid.appendChild(movieDiv);
-      });
-    });
-}
-
-console.log("earchMovies :",searchMovies());
-/*function searchMoviebyName()
-{
-  const movieObject=getMovies(BASE_URL);
-  document.getElementById('searchMovie').addEventListener('click',function()
-  {
-    //localStorage.setItem('movieObject',JSON.stringify(movieObject));
-    console.log(movieObject);
+  // Check if the movie is already in the cart based on its ID
+  if (cart.some((movie) => movie.id === movieId)) {
+    alert(`${movieTitle} is already in your Favorite!`);
+    return;
   }
-);
+
+  // Add the movie to the cart
+  cart.push({ id: movieId, poster_path: posterPath, title: movieTitle });
+
+  // Save the updated cart back to localStorage
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  // Display a success message
+  alert(`${movieTitle} has been added to your Favorite!`);
 }
-
-// console.log("searchMoviebyName :",searchMoviebyName());*/
-
-// ####################################
 
 document.getElementById('searchMovie').addEventListener('click', async() => {
   let found = 0;

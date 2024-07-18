@@ -2,7 +2,7 @@
   "name": "TMDB_API",
   "source": "index.html",
   "scripts": {
-    "dev": "parcel",
+    "dev": "parcel index.html",
     "build": "parcel build"
   },
   "devDependencies": {
