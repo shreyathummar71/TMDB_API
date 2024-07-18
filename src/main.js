@@ -1,14 +1,18 @@
 //On pageload calls the fetch
+
+const apikey = "fddc45029159988c8c3aca4c9d7c477e";
+const apiUrl = `https://api.themoviedb.org/3/movie/popular?api_key=${apikey}&language=en-US&page=1`;
+let data = null;
+
 document.addEventListener("DOMContentLoaded", async () => {
-  const apikey = "fddc45029159988c8c3aca4c9d7c477e";
-  const apiUrl = `https://api.themoviedb.org/3/movie/popular?api_key=${apikey}&language=en-US&page=1`;
   //Fetching Movies data
   try {
     const response = await fetch(apiUrl);
     if (!response.ok) {
       throw new Error(`Network issue, ${response.status}`);
     }
-    const data = await response.json();
+    data = await response.json();
+    console.log(typeof data);
     console.log(data);
     fetchData(data.results);
   } catch (error) {
@@ -55,12 +59,12 @@ const fetchData = (movies) => {
     card.innerHTML = `
     <img src= "${`https://image.tmdb.org/t/p/w500${thumbNail}`}" alt="${title}" class="w-full h-auto object-cover">
     <div class="px-6 py-4 h-auto w-full">
-     <div class="font-bold text-xl mb-2 truncate">${title}</div>
+    <div class="font-bold text-xl mb-2 truncate">${title}</div>
     <p class="text-gray-700 text-base truncate">${overview}</p>
     <div class="font-bold text-l mb-2">Releasing on: ${releaseDate}</div>
     <button class="add-to-cart bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"  data-poster-path="https://image.tmdb.org/t/p/w500/${thumbNail}" data-id="${uniqueId}" data-title="${title}">Add to Favorite</button>
     </div>
-   `;
+  `;
     moviesContainer.appendChild(card);
   });
   // Add event listeners to the buttons
@@ -95,23 +99,8 @@ function addToCart(event) {
   alert(`${movieTitle} has been added to your Favorite!`);
 }
 
-document.getElementById('searchMovie').addEventListener('click', async() => {
-  let found = 0;
-  const apikey = "fddc45029159988c8c3aca4c9d7c477e";
-  const apiUrl = `https://api.themoviedb.org/3/movie/popular?api_key=${apikey}&language=en-US&page=1`;
-
-  //Fetching Movies data
-  try {
-    const response = await fetch(apiUrl);
-    if (!response.ok) {
-      throw new Error(`Network issue, ${response.status}`);
-    }
-    const data = await response.json();
-    console.log(data);
-    searchData(data.results);
-  } catch (error) {
-    console.log("Fetch Error", error);
-  }
+document.getElementById("searchMovie").addEventListener("click", async () => {
+  searchData(data.results);  
 });
 
 const searchData = (movies) => {
@@ -135,41 +124,63 @@ const searchData = (movies) => {
     "justify-items-center",
     "items-center"
   );
+
+  let found = 0;
+  var text = "";
+
+  let element = document.getElementById("searchInput");
+  if (element) {
+    text = element.value;
+    console.log(text);      
+  } else {
+    console.log("Element not found");
+  }
+
+  const thumbnailBaseUrl = "https://image.tmdb.org/t/p/w500";
+
   movies.forEach((movie) => {
     const title = movie.title;
-    const thumbNail = movie.poster_path;
+    const thumbnail = movie.poster_path;
     const overview = movie.overview;
-    const card = document.createElement("div");
-    card.classList.add(
-      "max-w-md",
-      "rounded-lg",
-      "overflow-hidden",
-      "shadow-lg",
-      "m-2",
-      "h-auto",
-      "w-full"
-    );
-    card.innerHTML = `
-    <img src= "${`https://image.tmdb.org/t/p/w500${thumbNail}`}" alt="${title}" class="w-full h-auto object-cover">
-    <div class="px-6 py-4 h-80 w-full">
-     <div class="font-bold text-xl mb-2">${title}</div>
-    <p class="text-gray-700 text-base">${overview}</p>
-    
-    </div>
-   `;
+    const uniqueId = movie.id;
+    const releaseDate = movie.release_date;
 
-
-  var element = document.getElementById('searchInput');
-  if(element) {
-    var text = element.value;
-    console.log(text);
-  } else {
-      console.log('Element not found');
-  }
     let stringTitle = String(title).toLowerCase();
-    if( stringTitle.includes(text.toLowerCase()))
-    {
+    if (stringTitle.includes(text.toLowerCase())) {
+      found = 1; // set found flag so that alert message can be skipped
+      const card = document.createElement("div");
+      card.classList.add(
+        "max-w-md",
+        "rounded-lg",
+        "overflow-hidden",
+        "shadow-lg",
+        "m-2",
+        "h-auto",
+        "w-full"
+      );
+      card.innerHTML = `
+      <img src= "${`${thumbnailBaseUrl}${thumbnail}`}" alt="${title}" class="w-full h-auto object-cover">
+      <div class="px-6 py-4 h-auto w-full">
+      <div class="font-bold text-xl mb-2 truncate">${title}</div>
+      <p class="text-gray-700 text-base truncate">${overview}</p>
+      <div class="font-bold text-l mb-2">Releasing on: ${releaseDate}</div>
+      <button class="add-to-cart bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"  
+      data-poster-path="${thumbnailBaseUrl}${thumbnail}" data-id="${uniqueId}" data-title="${title}">Add to Favorite</button>
+      </div>
+      `;
       moviesContainer.appendChild(card);
     }
+  });
+
+  if ( found == 0 )
+  {
+    alert(`${text} not found`);
+    window.location.href = 'index.html';
+  }
+
+  // Add event listeners to the buttons
+  const buttons = document.querySelectorAll(".add-to-cart");
+  buttons.forEach((button) => {
+    button.addEventListener("click", addToCart);
   });
 };
