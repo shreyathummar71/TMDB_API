@@ -8,12 +8,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!response.ok) {
       throw new Error(`Network issue, ${response.status}`);
     }
-    const data = await response.json();
+    data = await response.json();
     console.log(data);
     fetchData(data.results);
   } catch (error) {
     console.log("Fetch Error", error);
   }
+  document.getElementById("searchMovie").addEventListener("click", () => {
+    const searchTerm = document
+      .getElementById("searchInput")
+      .value.toLowerCase();
+    searchData(searchTerm);
+  });
 });
 const fetchData = (movies) => {
   const moviesContainer = document.getElementById("movies-container");
@@ -94,3 +100,14 @@ function addToCart(event) {
   // Display a success message
   alert(`${movieTitle} has been added to your Favorite!`);
 }
+const searchData = (searchTerm) => {
+  const filteredMovies = data.results.filter((movie) =>
+    movie.title.toLowerCase().includes(searchTerm)
+  );
+
+  if (filteredMovies.length > 0) {
+    fetchData(filteredMovies);
+  } else {
+    alert("No movies found matching your search.");
+  }
+};

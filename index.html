@@ -10,6 +10,14 @@
 
 <body>
   <header><a href="./journal.html">journal</a></header>
+  <div class="search-container px-2 py-4 mx-auto mt-4 mb-4 md:ml-10 md:mr-10">
+    <input type="text" id="searchInput"
+      class="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      placeholder="Search for movies..." />
+    <button id="searchMovie" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-2">
+      Search
+    </button>
+  </div>
   <main>
     <h1>Movie Cards</h1>
     <div id="movies-container"></div>
