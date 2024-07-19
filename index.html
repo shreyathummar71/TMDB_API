@@ -1,36 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Setting up Tailwind CSS via the CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="src/style.css" />
-    <title>Movie Cards</title>
-  </head>
 
-  <body>
-    <header><a href="./journal.html">journal</a></header>
-       <!--START SearchBar Section-->
-       <section style="background-color: #122061" class="custom-gradient-bg from-zinc-700 shadow-lg p-10 flex">
-        <input type="text" id="searchInput" placeholder="Search for Movies.." style="background-color: #3f60ad" class="text-white rounded-full pl-4 pr-10 py-2 w-full focus:outline-none focus:ring focus:border-blue-300 flex p-8">
-        <button class="absolute right-2 top-1/2 transform -translate-y-1/2 text-white ">
-          <button id="searchMovie" type="submit" class="inline-flex items-center py-2.5 px-3 ms-2 text-sm font-medium text-white rounded-full border border-white hover:bg-blue-900 focus:ring-4">
-            <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-            </svg>Search
-          </button>
-        </button>
-        <div  id="MoviesGrid"></div>
-      </section>
-          <!--END SearchBar Section-->
-    </header>
-    <main>
-      <h1>Movie Cards</h1>
-      <div id="movies-container"></div>
-    </main>
-    <footer></footer>
-    <script src="./src/main.js"></script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="src/style.css" />
+  <title>Movie Cards</title>
+</head>
+
+<body>
+  <header><a href="./journal.html">journal</a></header>
+  <div class="search-container px-2 py-4 mx-auto mt-4 mb-4 md:ml-10 md:mr-10">
+    <input type="text" id="searchInput"
+      class="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      placeholder="Search for movies..." />
+    <button id="searchMovie" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-2">
+      Search
+    </button>
+  </div>
+  <main>
+    <h1>Movie Cards</h1>
+    <div id="movies-container"></div>
+  </main>
+  <footer></footer>
+  <script src="./src/main.js"></script>
 </body>
 
 </html>

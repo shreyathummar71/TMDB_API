@@ -12,12 +12,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       throw new Error(`Network issue, ${response.status}`);
     }
     data = await response.json();
-    console.log(typeof data);
     console.log(data);
     fetchData(data.results);
   } catch (error) {
     console.log("Fetch Error", error);
   }
+  document.getElementById("searchMovie").addEventListener("click", () => {
+    const searchTerm = document
+      .getElementById("searchInput")
+      .value.toLowerCase();
+    searchData(searchTerm);
+  });
 });
 const fetchData = (movies) => {
   const moviesContainer = document.getElementById("movies-container");
@@ -98,89 +103,14 @@ function addToCart(event) {
   // Display a success message
   alert(`${movieTitle} has been added to your Favorite!`);
 }
-
-document.getElementById("searchMovie").addEventListener("click", async () => {
-  searchData(data.results);  
-});
-
-const searchData = (movies) => {
-  const moviesContainer = document.getElementById("movies-container");
-  moviesContainer.innerHTML = "";
-  moviesContainer.classList.add(
-    "grid",
-    "grid-cols-1",
-    "sm:grid-cols-2",
-    "md:grid-cols-3",
-    "lg:grid-cols-4",
-    "gap-x-4",
-    "gap-y-4",
-    "px-2",
-    "py-10",
-    "mx-auto",
-    "mt-8",
-    "mb-8",
-    "md:ml-10",
-    "md:mr-10",
-    "justify-items-center",
-    "items-center"
+const searchData = (searchTerm) => {
+  const filteredMovies = data.results.filter((movie) =>
+    movie.title.toLowerCase().includes(searchTerm)
   );
 
-  let found = 0;
-  var text = "";
-
-  let element = document.getElementById("searchInput");
-  if (element) {
-    text = element.value;
-    console.log(text);      
+  if (filteredMovies.length > 0) {
+    fetchData(filteredMovies);
   } else {
-    console.log("Element not found");
+    alert("No movies found matching your search.");
   }
-
-  const thumbnailBaseUrl = "https://image.tmdb.org/t/p/w500";
-
-  movies.forEach((movie) => {
-    const title = movie.title;
-    const thumbnail = movie.poster_path;
-    const overview = movie.overview;
-    const uniqueId = movie.id;
-    const releaseDate = movie.release_date;
-
-    let stringTitle = String(title).toLowerCase();
-    if (stringTitle.includes(text.toLowerCase())) {
-      found = 1; // set found flag so that alert message can be skipped
-      const card = document.createElement("div");
-      card.classList.add(
-        "max-w-md",
-        "rounded-lg",
-        "overflow-hidden",
-        "shadow-lg",
-        "m-2",
-        "h-auto",
-        "w-full"
-      );
-      card.innerHTML = `
-      <img src= "${`${thumbnailBaseUrl}${thumbnail}`}" alt="${title}" class="w-full h-auto object-cover">
-      <div class="px-6 py-4 h-auto w-full">
-      <div class="font-bold text-xl mb-2 truncate">${title}</div>
-      <p class="text-gray-700 text-base truncate">${overview}</p>
-      <div class="font-bold text-l mb-2">Releasing on: ${releaseDate}</div>
-      <button class="add-to-cart bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"  
-      data-poster-path="${thumbnailBaseUrl}${thumbnail}" data-id="${uniqueId}" data-title="${title}">Add to Favorite</button>
-      </div>
-      `;
-      moviesContainer.appendChild(card);
-    }
-  });
-
-  if ( found == 0 )
-  {
-    alert(`${text} not found`);
-    window.location.href = 'index.html';
-  }
-
-  // Add event listeners to the buttons
-  const buttons = document.querySelectorAll(".add-to-cart");
-  buttons.forEach((button) => {
-    button.addEventListener("click", addToCart);
-  });
 };
